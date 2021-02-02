@@ -11,20 +11,20 @@ exports.Kakao = function() {
         this.parsedTemplate = null;
         this.csrf = null;
     }
-    Kakao.prototype.init = function(apiKey) {
-        if(typeof apiKey !== 'string' || apiKey.length !== 32) throw new TypeError('api key ' + apiKey + ' is not valid api key');
-        this.apiKey = apiKey;
-        return this;
-    };
+    // Kakao.prototype.init = function(apiKey) {
+    //     if(typeof apiKey !== 'string' || apiKey.length !== 32) throw new TypeError('api key ' + apiKey + ' is not valid api key');
+    //     this.apiKey = apiKey;
+    //     return this;
+    // };
     Kakao.prototype.isInitialized = function() { return !!this.apiKey; };
     Kakao.prototype.static = {
-        ua: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36',
+        ua: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36', //유저 에이전트
         ct: 'application/x-www-form-urlencoded',
         ka: 'sdk/1.36.6 os/javascript lang/en-US device/Win32 origin/http%3A%2F%2Fdevelopers.kakao.com'
     };
     Kakao.prototype.login = function(id, password, apiKey) {
         if(typeof apiKey !== 'string' || apiKey.length !== 32) throw new TypeError('api key ' + apiKey + ' is not valid api key');
-        this.apiKey = apiKey;
+        this.apiKey = apiKey; //apikey등록
         
         if(!this.isInitialized()) throw new ReferenceError('method login is called before initialization');
         if(typeof id !== 'string') throw new TypeError('invalid id type ' + typeof id);
