@@ -180,12 +180,13 @@ exports.Kakao = function() {
     };
 
 
-    Kakao.prototype.sendText = function(roomTitle, Text) { //텍스트 보내기
+    Kakao.prototype.sendText = function(roomTitle, Text, dec) { //텍스트 보내기
             this.send(roomTitle, {
                 "link_ver": "4.0",
                 "template_id": 46424, //템플릿 id 입력
                 "template_args": { //${변수명}들 입력
-                    "Text": Text
+                    "Text": Text,
+                    "dec": dec
                 }
             }, "custom");
     };
