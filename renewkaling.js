@@ -191,12 +191,14 @@ exports.Kakao = function() {
             }, "custom");
     };
 
-    Kakao.prototype.sendImage = function(roomTitle, imageUrl) { //이미지 보내기
+    Kakao.prototype.sendImage = function(roomTitle, imageUrl, Text, dec) { //이미지 보내기
         this.send(roomTitle, {
             "link_ver": "4.0",
             "template_id": 46448, //템플릿 id 입력
             "template_args": { //${변수명}들 입력
-                "img": imageUrl
+                "img": imageUrl,
+                "Text": Text,
+                "dec": dec
             }
         }, "custom");
     }
