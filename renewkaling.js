@@ -1,207 +1,215 @@
-// @ts-nocheck
-const cryptoModule = require('./crypto');
-const CryptoJS = cryptoModule.CryptoJS;
+// © 2021 Kiri.dev, All rights reserved.
+// GNU General Public License v3.0
+// Permissions of this strong copyleft license are conditioned on making available complete source code of licensed works and modifications,
+// which include larger works using a licensed work, under the same license.
+// Copyright and license notices must be preserved.
+// Contributors provide an express grant of patent rights.
+// License https://github.com/dev-kiri/KakaoLink/blob/main/LICENSE
 
-exports.Kakao = function() {
+module.exports = (function () {
+    'use strict'
+    const { CryptoJS } = require('./crypto')
+    
     function Kakao() {
-        this.apiKey = null;
-        this.cookies = {};
-        this.loginReferer = null;
-        this.cryptoKey = null;
-        this.parsedTemplate = null;
-        this.csrf = null;
+        this.apiKey = null
+        this.cookies = {}
+        this.kakaoStatic = 'sdk/1.36.6 os/javascript lang/en-US device/Win32 origin/'
     }
-    // Kakao.prototype.init = function(apiKey) {
-    //     if(typeof apiKey !== 'string' || apiKey.length !== 32) throw new TypeError('api key ' + apiKey + ' is not valid api key');
-    //     this.apiKey = apiKey;
-    //     return this;
-    // };
-    Kakao.prototype.isInitialized = function() { return !!this.apiKey; };
-    Kakao.prototype.static = {
-        ua: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36', //유저 에이전트
-        ct: 'application/x-www-form-urlencoded',
-        ka: 'sdk/1.36.6 os/javascript lang/en-US device/Win32 origin/http%3A%2F%2Fdevelopers.kakao.com'
-    };
-    Kakao.prototype.login = function(id, password, apiKey) {
-        if(typeof apiKey !== 'string' || apiKey.length !== 32) throw new TypeError('api key ' + apiKey + ' is not valid api key');
-        this.apiKey = apiKey; //apikey등록
+
+    // Kakao.prototype.init = function (apiKey, location) {
         
-        if(!this.isInitialized()) throw new ReferenceError('method login is called before initialization');
-        if(typeof id !== 'string') throw new TypeError('invalid id type ' + typeof id);
-        if(typeof password !== 'string') throw new TypeError('invalid password type ' + typeof password);
+    //     if (apiKey.constructor != String || location.constructor != String) throw new TypeError('매개변수의 타입이 올바르지 않습니다.')
+    //     if (apiKey.length != 32) throw new ReferenceError('API KEY는 32자여야 합니다. 올바른 API KEY를 사용했는지 확인해주세요.')
+    //     if (!/^http(s)?\:\/\/.+/.test(location)) throw new ReferenceError('도메인 주소의 형식이 올바르지 않습니다.')
 
-        (function loginManager() {
-            const connection = org.jsoup.Jsoup.connect('https://sharer.kakao.com/talk/friends/picker/link');
-            connection.header('User-Agent', this.static.ua);
-            connection.data({
-                app_key: this.apiKey,
-                validation_action: 'default',
-                validation_params: '{}',
-                ka: this.static.ka,
-                lcba: ''
-            });
-            connection.ignoreHttpErrors(true);
-            connection.method(org.jsoup.Connection.Method.POST);
-            const response = connection.execute();
-            if(response.statusCode() === 401) throw new ReferenceError('invalid api key');
-            if(response.statusCode() !== 200) throw new Error('unexpected error on method login');
-            Object.assign(this.cookies, {
-                _kadu: response.cookie('_kadu'),
-                _kadub: response.cookie('_kadub'),
-                _maldive_oauth_webapp_session: response.cookie('_maldive_oauth_webapp_session')
-            });
-            const document = response.parse();
-            this.cryptoKey = document.select('input[name=p]').attr('value');
-            this.loginReferer = response.url().toString();
-        }).bind(this)();
+    //     this.apiKey = apiKey
+    //     this.kakaoStatic += encodeURIComponent(location || 'http://kiribot.dothome.co.kr')
+    // }
 
-        (function tiara() {
-            const connection = org.jsoup.Jsoup.connect('https://track.tiara.kakao.com/queen/footsteps');
-            connection.ignoreContentType(true);
-            const response = connection.execute();
-            this.cookies.TIARA = response.cookie('TIARA');
-        }).bind(this)();
+    Kakao.prototype.login = function (email, password, apiKey, location) {
+        if (apiKey.constructor != String || location.constructor != String) throw new TypeError('매개변수의 타입이 올바르지 않습니다.')
+        if (apiKey.length != 32) throw new ReferenceError('API KEY는 32자여야 합니다. 올바른 API KEY를 사용했는지 확인해주세요.')
+        if (!/^http(s)?\:\/\/.+/.test(location)) throw new ReferenceError('도메인 주소의 형식이 올바르지 않습니다.')
+        this.apiKey = apiKey
+        this.kakaoStatic += encodeURIComponent(location || 'http://kiribot.dothome.co.kr')
 
-        (function authenticate() {
-            const connection = org.jsoup.Jsoup.connect('https://accounts.kakao.com/weblogin/authenticate.json');
-            connection.header('User-Agent',this.static.ua);
-            connection.header('Referer',this.loginReferer);
-            connection.cookies(this.cookies);
-            connection.data({
-                os: 'web',
-                webview_v: '2',
-                email: CryptoJS.AES.encrypt(id, this.cryptoKey).toString(),
-                password: CryptoJS.AES.encrypt(password, this.cryptoKey).toString(),
-                continue: decodeURIComponent(this.loginReferer.split('continue=')[1]),
-                third: 'false',
-                k: 'true'
-            });
-            connection.ignoreContentType(true);
-            connection.method(org.jsoup.Connection.Method.POST);
-            const response = connection.execute();
-            const result = JSON.parse(response.body());
-            if(result.status === -450) throw new ReferenceError('invalid id or password');
-            if(result.status !== 0 ) throw new Error('unexpected error on method login');
-            Object.assign(this.cookies, {
-                _kawlt: response.cookie('_kawlt'),
-                _kawltea: response.cookie('_kawltea'),
-                _karmt: response.cookie('_karmt'),
-                _karmtea: response.cookie('_karmtea')
-            });
-        }).bind(this)();
-        return this;
-    };
-    Kakao.prototype.send = function(roomTitle, data, type) {
-        type = type || 'default';
+        if (email.constructor != String) throw new TypeError('이메일의 타입은 String이어야 합니다.')
+        if (password.constructor != String) throw new TypeError('비밀번호의 타입은 String이어야 합니다.')
+        if (this.apiKey === null) throw new ReferenceError('로그인 메서드가 카카오 SDK가 초기화되기 전에 호출되었습니다.')
         
-        (function proceed() {
-            const connection = org.jsoup.Jsoup.connect('https://sharer.kakao.com/talk/friends/picker/link');
-            connection.header('User-Agent', this.static.ua);
-            connection.header('Referer', this.loginReferer);
-            connection.cookies({
-                TIARA: this.cookies.TIARA,
-                _kawlt: this.cookies._kawlt,
-                _kawltea: this.cookies._kawltea,
-                _karmt: this.cookies._karmt,
-                _karmtea: this.cookies._karmtea
-            });
-            connection.data({
-                app_key: this.apiKey,
-                validation_action: type,
-                validation_params: JSON.stringify(data),
-                ka: this.static.ka,
-                lcba: ''
-            });
-            connection.method(org.jsoup.Connection.Method.POST);
-            connection.ignoreHttpErrors(true);
-            const response = connection.execute();
-            if(response.statusCode() === 400) throw new TypeError('invalid template parameter');
-            Object.assign(this.cookies, {
-                KSHARER: response.cookie('KSHARER'),
-                using: 'true'
-            });
-            const document = response.parse();
-            this.parsedTemplate = JSON.parse(document.select('#validatedTalkLink').attr('value'));
-            this.csrf = document.select('div').last().attr('ng-init').split('\'')[1];
-        }).bind(this)();
-
-        (function getRooms() {
-            const connection = org.jsoup.Jsoup.connect('https://sharer.kakao.com/api/talk/chats');
-            connection.header('User-Agent', this.static.ua);
-            connection.header('Referer', 'https://sharer.kakao.com/talk/friends/picker/link');
-            connection.header('Csrf-Token', this.csrf);
-            connection.header('App-Key', this.apiKey);
-            connection.cookies(this.cookies);
-            connection.ignoreContentType(true);
-            const response = connection.execute();
-            const document = response.body().replace(/\u200b/g,'');
-            this.rooms = JSON.parse(document);
-        }).bind(this)();
-
-        (function sendTemplate() {
-            let id, securityKey;
-            for(let room of this.rooms.chats) {
-                if(room.title === roomTitle) {
-                    id = room.id;
-                    securityKey = this.rooms.securityKey;
-                    break;
+        const loginResponse = org.jsoup.Jsoup.connect('https://sharer.kakao.com/talk/friends/picker/link')
+            .data('app_key', this.apiKey)
+            .data('validation_action', 'default')
+            .data("validation_params", '{}')
+            .data("ka", this.kakaoStatic)
+            .data("lcba", "")
+            .method(org.jsoup.Connection.Method.POST)
+            .execute();
+        
+        switch (loginResponse.statusCode()) {
+            case 401: throw new ReferenceError('유효한 API KEY인지 확인해주세요.');
+            case 200:
+                this.referer = loginResponse.url().toExternalForm();
+                const doc = loginResponse.parse();
+                const cryptoKey = doc.select('input[name=p]').attr('value')
+                
+                Object.assign(this.cookies, {
+                    _kadu: loginResponse.cookie('_kadu'),
+                    _kadub: loginResponse.cookie('_kadub'),
+                    _maldive_oauth_webapp_session: loginResponse.cookie('_maldive_oauth_webapp_session'),
+                    TIARA: (
+                        org.jsoup.Jsoup.connect('https://track.tiara.kakao.com/queen/footsteps')
+                            .ignoreContentType(true)
+                            .execute()
+                            .cookie('TIARA')
+                    )
+                });
+                
+                const response = org.jsoup.Jsoup.connect('https://accounts.kakao.com/weblogin/authenticate.json')
+                    .referrer(this.referer)
+                    .cookies(this.cookies)
+                    .data('os', 'web')
+                    .data('webview_v', '2')
+                    .data('email', CryptoJS.AES.encrypt(email, cryptoKey).toString())
+                    .data('password', CryptoJS.AES.encrypt(password, cryptoKey).toString())
+                    .data('stay_signed_in', 'true')
+                    .data('continue', decodeURIComponent(this.referer.split('=')[1]))
+                    .data('third', 'false')
+                    .data('k', 'true')
+                    .method(org.jsoup.Connection.Method.POST)
+                    .ignoreContentType(true)
+                    .ignoreHttpErrors(true)
+                    .execute();
+                
+                switch (JSON.parse(response.body()).status) {
+                    case -450: 
+                        throw new ReferenceError('이메일 또는 비밀번호가 올바르지 않습니다.');
+                    case -481: 
+                    case -484:
+                        throw new ReferenceError(response.body())
+                    case 0:
+                        Object.assign(this.cookies, {
+                            _kawlt: response.cookie('_kawlt'),
+                            _kawltea: response.cookie('_kawltea'),
+                            _karmt: response.cookie('_karmt'),
+                            _karmtea: response.cookie('_karmtea')
+                        })
+                        break;
+                    default:
+                        throw new Error('로그인 도중 에러가 발생하였습니다. ' + response.body())
                 }
-            }
-            if(typeof id === 'undefined') throw new ReferenceError('invalid room name ' + roomTitle);
-            const connection = org.jsoup.Jsoup.connect('https://sharer.kakao.com/api/talk/message/link');
-            connection.header('User-Agent', this.static.ua);
-            connection.header('Referer', 'https://sharer.kakao.com/talk/friends/picker/link');
-            connection.header('Csrf-Token', this.csrf);
-            connection.header('App-Key', this.apiKey);
-            connection.header('Content-Type', 'application/json;charset=UTF-8');
-            connection.cookies({
-                KSHARER: this.cookies.KSHARER,
-                TIARA: this.cookies.TIARA,
-                using: this.cookies.using,
-                _kadu: this.cookies._kadu,
-                _kadub: this.cookies._kadub,
-                _kawlt: this.cookies._kawlt,
-                _kawltea: this.cookies._kawltea,
-                _karmt: this.cookies._karmt,
-                _karmtea: this.cookies._karmtea
-            });
-            connection.requestBody(JSON.stringify({
-                receiverChatRoomMemberCount: [1],
-                receiverIds: [id],
-                receiverType: 'chat',
-                securityKey: securityKey,
-                validatedTalkLink: this.parsedTemplate
-            }));
-            connection.ignoreContentType(true);
-            connection.ignoreHttpErrors(true);
-            connection.method(org.jsoup.Connection.Method.POST);
-            const response = connection.execute();
-        }).bind(this)();
-    };
+                break;
+            default: throw new Error('API KEY 인증 과정에서 에러가 발생하였습니다.')
+        }
+    }
+    
+    Kakao.prototype.send = function (room, params, type) {
+        const response = org.jsoup.Jsoup.connect('https://sharer.kakao.com/talk/friends/picker/link')
+            .referrer(this.referer)
+            .cookie('TIARA', this.cookies.TIARA)
+            .cookie('_kawlt', this.cookies._kawlt)
+            .cookie('_kawltea', this.cookies._kawltea)
+            .cookie('_karmt', this.cookies._karmt)
+            .cookie('_karmtea', this.cookies._karmtea)
+            .data('app_key', this.apiKey)
+            .data('validation_action', type || 'default')
+            .data('validation_params', JSON.stringify(params))
+            .data('ka', this.kakaoStatic)
+            .data('lcba', '')
+            .ignoreHttpErrors(true)
+            .method(org.jsoup.Connection.Method.POST)
+            .execute();
+        
+        switch (response.statusCode()) {
+            case 400: throw new ReferenceError('템플릿 객체가 올바르지 않거나, Web 플랫폼에 등록되어 있는 도메인과 현재 도메인이 일치하지 않습니다.')
+            case 200:
+                Object.assign(this.cookies, {
+                    KSHARER: response.cookie('KSHARER'),
+                    using: 'true'
+                });
+                const doc = response.parse();
+                const validatedTalkLink = doc.select('#validatedTalkLink').attr('value');
+                const csrfToken = doc.select('div').last().attr('ng-init').split('\'')[1];
+                const { chats, securityKey: key } = JSON.parse(
+                     org.jsoup.Jsoup.connect('https://sharer.kakao.com/api/talk/chats')
+                        .referrer('https://sharer.kakao.com/talk/friends/picker/link')
+                        .header('Csrf-Token', csrfToken)
+                        .header('App-Key', this.apiKey)
+                        .cookies(this.cookies)
+                        .ignoreContentType(true)
+                        .execute()
+                        .body()
+                        .toString()
+                        .replace('\u200b', '')
+                )
+                
+                for (var i = 0, j = chats.length, id, securityKey; i < j; i++) {
+                    const chat = chats[i];
+                    if (chat.title === room) {
+                        id = chat.id || null;
+                        securityKey = key || null;
+                        break;
+                    }
+                }
 
+                if (id === null) throw new ReferenceError('방 이름 ' + room + '을 찾을 수 없습니다. 올바른 방 이름인지 확인해주세요.');
+
+                const payload = {
+                    receiverChatRoomMemberCount: [1],
+                    receiverIds: [id],
+                    receiverType: 'chat',
+                    securityKey: securityKey,
+                    validatedTalkLink: JSON.parse(validatedTalkLink)
+                };
+
+                org.jsoup.Jsoup.connect('https://sharer.kakao.com/api/talk/message/link')
+                    .referrer('https://sharer.kakao.com/talk/friends/picker/link')
+                    .header('Csrf-Token', csrfToken)
+                    .header('App-Key', this.apiKey)
+                    .header('Content-Type', 'application/json;charset=UTF-8')
+                    .cookie('KSHARER', this.cookies.KSHARER)
+                    .cookie('TIARA', this.cookies.TIARA)
+                    .cookie('using', this.cookies.using)
+                    .cookie('_kadu', this.cookies._kadu)
+                    .cookie('_kadub', this.cookies._kadub)
+                    .cookie('_kawlt', this.cookies._kawlt)
+                    .cookie('_kawltea', this.cookies._kawltea)
+                    .cookie('_karmt', this.cookies._karmt)
+                    .cookie('_karmtea', this.cookies._karmtea)
+                    .requestBody(JSON.stringify(payload))
+                    .ignoreContentType(true)
+                    .ignoreHttpErrors(true)
+                    .method(org.jsoup.Connection.Method.POST)
+                    .execute()
+                
+                break;
+            
+            default: throw new Error('템플릿 인증 과정 중에 알 수 없는 오류가 발생하였습니다.');
+        }
+    }
 
     Kakao.prototype.sendText = function(roomTitle, Text, dec) { //텍스트 보내기
-            this.send(roomTitle, {
-                "link_ver": "4.0",
-                "template_id": 46424, //템플릿 id 입력
-                "template_args": { //${변수명}들 입력
-                    "Text": Text,
-                    "dec": dec
-                }
-            }, "custom");
+        this.send(roomTitle, {
+            "link_ver": "4.0",
+            "template_id": 46424, //템플릿 id 입력
+            "template_args": { //${변수명}들 입력
+                "Text": Text,
+                "dec": dec
+            }
+        }, "custom");
     };
-
+    
     Kakao.prototype.sendImage = function(roomTitle, imageUrl, Text, dec) { //이미지 보내기
         this.send(roomTitle, {
             "link_ver": "4.0",
             "template_id": 46448, //템플릿 id 입력
             "template_args": { //${변수명}들 입력
-                "img": imageUrl,
-                "Text": Text,
-                "dec": dec
-            }
-        }, "custom");
-    }
+            "img": imageUrl,
+            "Text": Text,
+            "dec": dec
+        }
+    }, "custom");
+}
 
-    return Kakao;
-};
+    return Kakao
+})();
