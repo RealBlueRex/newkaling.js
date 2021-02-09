@@ -15,3 +15,31 @@ kaling.js를 더더욱 심플하게 바꾸는 작업입니다(원본 소스는 �
 
 # 주의사항
 1. 키리님의 기본카링 소스에 GNU 라이선스가 적용됨에 따라 수정이 가능하다는 점에서 수정작업을 진행합니다.
+
+# 예제 소스
+```javascript
+const kakaoModule = require('renewkaling');
+const Kakao = new kakaoModule();
+
+Kakao.init('Javascript key', 'http://example.com') // 자바스크립트 키, Web 플랫폼에 등록한 도메인
+Kakao.login('email', 'password', 'JSkey', 'http://example.com'); // 카카오링크를 보낼 계정의 이메일과 비밀번호, 자바스크립트 키, Web 플랫폼에 등록한 도메인
+
+function response(room, msg) {
+    if (msg === '/테스트') {
+        Kakao.send(room, {
+            link_ver: '4.0',
+            template_id: 10000,
+            template_args: {}
+        }, 'custom')
+    }
+
+    if (msg == "/텍스트") {
+        Kakao.sendText(room, "안녕하세요", "예제입니다.");
+    }
+    
+    if (msg == "/이미지") {
+        Kakao.sendImage(rooom, "URL", "안녕하세요", "이미지입니다.")
+    }
+}
+
+```
