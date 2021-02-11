@@ -21,7 +21,6 @@ kaling.js를 더더욱 심플하게 바꾸는 작업입니다(원본 소스는 �
 const kakaoModule = require('renewkaling');
 const Kakao = new kakaoModule();
 
-Kakao.init('Javascript key', 'http://example.com') // 자바스크립트 키, Web 플랫폼에 등록한 도메인
 Kakao.login('email', 'password', 'JSkey', 'http://example.com'); // 카카오링크를 보낼 계정의 이메일과 비밀번호, 자바스크립트 키, Web 플랫폼에 등록한 도메인
 
 function response(room, msg) {
