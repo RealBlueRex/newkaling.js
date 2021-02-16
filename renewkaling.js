@@ -191,25 +191,42 @@ module.exports = (function () {
     Kakao.prototype.sendText = function(roomTitle, Text, dec) { //텍스트 보내기
         this.send(roomTitle, {
             "link_ver": "4.0",
-            "template_id": 46424, //템플릿 id 입력
-            "template_args": { //${변수명}들 입력
-                "Text": Text,
-                "dec": dec
+            "template_object": {
+                "object_type": "feed",
+                "button_title" : "",
+                "content": {
+                    "title": Text,
+                    "image_url": "",
+                    "link": {},
+                    "description": dec,
+                },
+                "buttons": [{
+                    "title": "",
+                    "link": {}
+                }]
             }
-        }, "custom");
+        });
     };
-    
+
     Kakao.prototype.sendImage = function(roomTitle, imageUrl, Text, dec) { //이미지 보내기
         this.send(roomTitle, {
             "link_ver": "4.0",
-            "template_id": 46448, //템플릿 id 입력
-            "template_args": { //${변수명}들 입력
-            "img": imageUrl,
-            "Text": Text,
-            "dec": dec
-        }
-    }, "custom");
-}
+            "template_object": {
+                "object_type": "feed",
+                "button_title" : "",
+                "content": {
+                    "title": Text,
+                    "image_url": imageUrl,
+                    "link": {},
+                    "description": dec,
+                },
+                "buttons": [{
+                    "title": "",
+                    "link": {}
+                }]
+            }
+        });
+    }
 
     return Kakao
 })();
