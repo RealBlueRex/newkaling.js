@@ -227,6 +227,24 @@ module.exports = (function () {
             }
         });
     }
+    Kakao.prototype.sendfileImage = function(room, path, Text, dec){
+        var key = (function upload(type, path) {
+       	 try{
+                var file = new java.io.File(path);
+                var fileInputStream = new java.io.FileInputStream(file);
+            }catch(e) {return null;}
+        var res = org.jsoup.Jsoup.connect("https://up-m.talk.kakao.com/upload")
+        .header("A", "An/9.0.0/ko")
+        .data("attachment_type", type)
+        .data("user_id", "-1")
+        .data("file", file.getName(), fileInputStream)
+        .ignoreHttpErrors(true).post().text();
+        return res[0]=='5'?null:res
+        })("image/jpeg", path);
+        var url = 'http://dn-m.talk.kakao.com/'+key;
+        if(key)this.sendImage(room, url, Text, dec);
+        else return "없는 파일이거나 이미지가 아닙니다.";
+    }
 
     return Kakao
 })();
