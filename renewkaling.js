@@ -232,7 +232,7 @@ module.exports = (function () {
        	 try{
                 var file = new java.io.File(path);
                 var fileInputStream = new java.io.FileInputStream(file);
-            }catch(e)return null;
+            }catch(e) {return null;}
         var res = org.jsoup.Jsoup.connect("https://up-m.talk.kakao.com/upload")
         .header("A", "An/9.0.0/ko")
         .data("attachment_type", type)
