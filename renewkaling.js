@@ -241,6 +241,7 @@ module.exports = (function () {
         .ignoreHttpErrors(true).post().text();
         return res[0]=='5'?null:res
         })("image/jpeg", path);
+        var url = 'http://dn-m.talk.kakao.com/'+key;
         if(key)this.sendImage(room, url, Text, dec);
         else return "없는 파일이거나 이미지가 아닙니다.";
     }
