@@ -12,8 +12,8 @@ This guide for English
   1. [make KakaoDeveloper Id](#make-kakaodeveloper-id)
 
 ## Ready
-    
-  For Ready
+  <a name="ready-read"></a><a name="1.1"></a>
+  - [1.1](#ready-read) *Ready*: This guide explains how to use kaling.js. We are not responsible for penalties using KakaoLink after reading this guide. All errors are included here. Then please have fun reading
 
 ## make kakaodeveloper id
 

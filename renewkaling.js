@@ -243,7 +243,7 @@ module.exports = (function () {
         })("image/jpeg", path);
         var url = 'http://dn-m.talk.kakao.com/'+key;
         if(key)this.sendImage(room, url, Text, dec);
-        else return "없는 파일이거나 이미지가 아닙니다.";
+        else return new TypeError("없는 파일이거나 이미지가 아닙니다.")
     }
 
     return Kakao
