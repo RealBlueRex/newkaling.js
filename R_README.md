@@ -9,7 +9,12 @@ This guide for English
 ## Contents
 
     1. [Ready](#ready)
+    1. [make KakaoDeveloper Id](#make-kakaodeveloper-id)
 
 ## Ready
     
     For Ready
+
+## make kakaodeveloper id
+
+    ready...
