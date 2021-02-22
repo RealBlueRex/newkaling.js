@@ -12,6 +12,7 @@ kaling.js를 더더욱 심플하게 바꾸는 작업입니다(원본 소스는 �
 1. Kakao.sendText(room, Text) 형식에서 Kakao.sendText(room, Text, dec)으로 변경되었습니다 이때 dec은 안보내도 상관이 없습니다.
 2. Kakao.sendImage(room, URL) 형식에서 Kakao.sendImage(room, URL, Text, dec)로 변경되었습니다 이때, Text는 카링 제목, dec은 설명입니다 이 둘은 안보내도 오류를 일으키지 않습니다.
 3. 델타님의 기본 카링 소스를 키리님의 카링소스로 변경하였습니다.
+4. 새로운 함수 Kakao.sendfileImage()를 추가했습니다. 사용방법은 예제소스를 참조해주세요
 
 # 주의사항
 1. 키리님의 기본카링 소스에 GNU 라이선스가 적용됨에 따라 수정이 가능하다는 점에서 수정작업을 진행합니다.
@@ -38,6 +39,10 @@ function response(room, msg) {
     
     if (msg == "/이미지") {
         Kakao.sendImage(rooom, "URL", "안녕하세요", "이미지입니다.")
+    }
+    
+    if (msg == "/파일") {
+        Kakao.sendfileImage(room, "/sdcard/example.jpg", "안녕하세요", "이미지 전송 테스트")
     }
 }
 
