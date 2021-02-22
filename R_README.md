@@ -1,4 +1,4 @@
-# KakaoLink for Rhino js Guide() {
+# KakaoLink for Rhino js Guide
 
 * KakaoLink Module *
 
