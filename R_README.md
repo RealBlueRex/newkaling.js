@@ -1,6 +1,6 @@
 # KakaoLink for Rhino js Guide
 
-* KakaoLink Module *
+*KakaoLink Module*
 
 > **Note**: 원본 모듈은 키리님, 델타님에게 있음을 안내드립니다.
 
@@ -8,13 +8,13 @@ This guide for English
 
 ## Contents
 
-    1. [Ready](#ready)
-    1. [make KakaoDeveloper Id](#make-kakaodeveloper-id)
+  1. [Ready](#ready)
+  1. [make KakaoDeveloper Id](#make-kakaodeveloper-id)
 
 ## Ready
     
-    For Ready
+  For Ready
 
 ## make kakaodeveloper id
 
-    ready...
+  ready...
