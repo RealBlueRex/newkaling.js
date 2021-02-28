@@ -5,6 +5,7 @@
 // Copyright and license notices must be preserved.
 // Contributors provide an express grant of patent rights.
 // License https://github.com/dev-kiri/KakaoLink/blob/main/LICENSE
+// rewrite by BlueRex and app
 
 module.exports = (function () {
     'use strict'
@@ -15,16 +16,6 @@ module.exports = (function () {
         this.cookies = {}
         this.kakaoStatic = 'sdk/1.36.6 os/javascript lang/en-US device/Win32 origin/'
     }
-
-    // Kakao.prototype.init = function (apiKey, location) {
-        
-    //     if (apiKey.constructor != String || location.constructor != String) throw new TypeError('매개변수의 타입이 올바르지 않습니다.')
-    //     if (apiKey.length != 32) throw new ReferenceError('API KEY는 32자여야 합니다. 올바른 API KEY를 사용했는지 확인해주세요.')
-    //     if (!/^http(s)?\:\/\/.+/.test(location)) throw new ReferenceError('도메인 주소의 형식이 올바르지 않습니다.')
-
-    //     this.apiKey = apiKey
-    //     this.kakaoStatic += encodeURIComponent(location || 'http://kiribot.dothome.co.kr')
-    // }
 
     Kakao.prototype.login = function (email, password, apiKey, location) {
         if (apiKey.constructor != String || location.constructor != String) throw new TypeError('매개변수의 타입이 올바르지 않습니다.')
