@@ -20,3 +20,6 @@ This guide for English
   - [2.1](#make-kakaodeveloper-id-first) **first**: Log in to Kakao Developer with your bot ID (At this time, the bot ID must have an email registered, and if you do not have an ID, please register as a member.)
 
   ![Ready_1](https://user-images.githubusercontent.com/65700898/108810127-c358ae80-75ed-11eb-9939-bbd5eeb9db02.png) (like That)
+
+  <a name="make-kakaodeveloper-id-two"></a><a name="2.2"></a>
+    - [2.2](#make-kakaodeveloper-id-two) **first**: register Kakao developer, and make the project(app)
