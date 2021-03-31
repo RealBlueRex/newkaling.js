@@ -8,19 +8,19 @@
  "use strict";
  const crypto = require("./crypto").CryptoJS;
  const ksoup = org.jsoup.Jsoup;
- let JsKey = null, Static = "sdk/1.36.6 os/javascript lang/en-US device/Win32 origin/", referer = null, cookies = null;
+ let JsKey = null, Static = java.lang.String("sdk/1.36.6 os/javascript lang/en-US device/Win32 origin/"), referer = null, cookies = "";
  module.exports = {
      login: function (email, password, apiKey, url) {
          if(typeof(email) !== "string" || typeof(password) !== "string" || typeof(apiKey) !== "string") throw new TypeError("파라미터들은 전부 String입니다.");
          if(apiKey.length != 32) throw new ReferenceError("apiKey는 32자리입니다. 혹 다른 서비스의 apiKey를 입력하셨나요?");
          if(!/^http(s)?\:\/\/.+/.test(url)) throw new ReferenceError("url 형식이 아니에요 :(");
-         JsKey = apiKey || null, Static += encodeURIComponent(url) || encodeURIComponent("http://plutonium.dothome.co.kr");
+         JsKey = apiKey || null, Static += encodeURIComponent(java.lang.String(url)) || encodeURIComponent("http://plutonium.dothome.co.kr");
          if(JsKey == null) throw new ReferenceError("JsKey가 null입니다?");
          const lr = ksoup.connect("https://sharer.kakao.com/talk/friends/picker/link").data({
-             "app_key": JsKey,
+             "app_key": java.lang.String(JsKey),
              "validation_action": "default",
              "validation_params": "{}",
-             "ka": Static,
+             "ka": java.lang.String(Static),
              "lcba": ""
          }).method(org.jsoup.Connection.Method.POST).execute();
          const ls = lr.statusCode();
@@ -28,7 +28,7 @@
              case 200:
                  referer = lr.url().toExternalForm()
                  let doc = lr.parse();
-                 let decryptKey =  doc.select('input[name=p]').attr('value');
+                 const decryptKey =  doc.select('input[name=p]').attr('value');
                  Object.assign(cookies, {
                      _kadu: lr.cookie('_kadu'),
                      _kadub: lr.cookie('_kadub'),
