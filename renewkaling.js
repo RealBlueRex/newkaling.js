@@ -237,6 +237,28 @@ module.exports = (function () {
         if(key)this.sendImage(room, url, Text, dec);
         else return new TypeError("없는 파일이거나 이미지가 아닙니다.")
     }
+    Kakao.prototype.sendButton = function (room, title, dec, button_title, button_url) {
+        this.send(room, {
+            "link_ver": "4.0",
+            "template_object": {
+                "object_type": "feed",
+                "button_title" : button_title,
+                "content": {
+                    "title": title,
+                    "image_url": "",
+                    "link": {},
+                    "description": dec,
+                },
+                "buttons": [{
+                    "title": button_title,
+                    "link": {
+                        "web_url": "http://gmdbasic.kro.kr/?" + button_url, 
+                        "mobile_web_url": "http://gmdbasic.kro.kr/?"+button_url
+                    }
+                }]
+            }
+        });
+    }
 
     return Kakao
 })();
