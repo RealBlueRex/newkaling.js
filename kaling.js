@@ -3,11 +3,12 @@
  * The license for crypto.js is owned by Google, and secondary distribution is prohibited. Other BlueRex licenses
  * Even if you use this source to violate Kakao's operating policy, we inform you that all users are responsible.
  * Copyright© all reversed BlueRex 2021 ~ 
+ * ++ 델타님 카링모듈, 키리님 카링모듈을 많이 참고했어요
  */
 
  "use strict";
+ importClass(org.jsoup.Jsoup)
  const crypto = require("./crypto").CryptoJS;
- const ksoup = org.jsoup.Jsoup;
  let JsKey = null, Static = java.lang.String("sdk/1.36.6 os/javascript lang/en-US device/Win32 origin/"), referer = null, cookies = "";
  module.exports = {
      login: function (email, password, apiKey, url) {
@@ -16,7 +17,7 @@
          if(!/^http(s)?\:\/\/.+/.test(url)) throw new ReferenceError("url 형식이 아니에요 :(");
          JsKey = apiKey || null, Static += encodeURIComponent(java.lang.String(url)) || encodeURIComponent("http://plutonium.dothome.co.kr");
          if(JsKey == null) throw new ReferenceError("JsKey가 null입니다?");
-         const lr = ksoup.connect("https://sharer.kakao.com/talk/friends/picker/link").data({
+         const lr = Jsoup.connect("https://sharer.kakao.com/talk/friends/picker/link").data({
              "app_key": java.lang.String(JsKey),
              "validation_action": "default",
              "validation_params": "{}",
@@ -34,13 +35,13 @@
                      _kadub: lr.cookie('_kadub'),
                      _maldive_oauth_webapp_session: lr.cookie('_maldive_oauth_webapp_session'),
                      TIARA: (
-                        ksoup.connect('https://track.tiara.kakao.com/queen/footsteps')
+                        Jsoup.connect('https://track.tiara.kakao.com/queen/footsteps')
                             .ignoreContentType(true)
                             .execute()
                             .cookie('TIARA')
                     )
                  });
-                 const r = ksoup.connect("https://accounts.kakao.com/weblogin/authenticate.json").data({
+                 const r = Jsoup.connect("https://accounts.kakao.com/weblogin/authenticate.json").data({
                      "os": "web",
                      "webview_v": "2",
                      "email": crypto.AES.encrypt(email, decryptKey).toString(),
@@ -76,7 +77,7 @@
              "template_id": template_id,
              "template_args": JSON.stringify(template_args)
          }
-         const sr = ksoup.connect("https://sharer.kakao.com/talk/friends/picker/link").referrer(referer).cookies({
+         const sr = Jsoup.connect("https://sharer.kakao.com/talk/friends/picker/link").referrer(referer).cookies({
              "TIARA": cookies.TIARA,
              "_kawlt": cookies._kawlt,
              "_kawltea": cookies._kawltea,
@@ -97,7 +98,7 @@
                      using: 'true'
                  });
                  const doc = sr.parse(), vtr = doc.select('#validatedTalkLink').attr('value'), ni = doc.select('div').last().attr('ng-init').split('\'')[1];
-                 const { chats, sk: key } = JSON.parse(ksoup.connect('https://sharer.kakao.com/api/talk/chats').referrer('https://sharer.kakao.com/talk/friends/picker/link')
+                 const { chats, sk: key } = JSON.parse(Jsoup.connect('https://sharer.kakao.com/api/talk/chats').referrer('https://sharer.kakao.com/talk/friends/picker/link')
                  .header('Csrf-Token', ni)
                  .header('App-Key', JsKey)
                  .cookies(cookies).ignoreContentType(true).execute().body().toString().replace('\u200b', ''))
@@ -111,7 +112,7 @@
                      
                  }
                  if(id === null) throw new ReferenceError("방이 없는데요?");
-                 ksoup.connect("https://sharer.kakao.com/api/talk/message/link").referrer("https://sharer.kakao.com/talk/friends/picker/link")
+                 Jsoup.connect("https://sharer.kakao.com/api/talk/message/link").referrer("https://sharer.kakao.com/talk/friends/picker/link")
                  .header('Csrf-Token', ni)
                  .header('App-Key', JsKey)
                  .header('Content-Type', 'application/json;charset=UTF-8').cookies({
