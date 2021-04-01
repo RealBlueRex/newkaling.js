@@ -34,13 +34,11 @@
                      _kadu: lr.cookie('_kadu'),
                      _kadub: lr.cookie('_kadub'),
                      _maldive_oauth_webapp_session: lr.cookie('_maldive_oauth_webapp_session'),
-                     TIARA: (
-                        Jsoup.connect('https://track.tiara.kakao.com/queen/footsteps')
-                            .ignoreContentType(true)
-                            .execute()
-                            .cookie('TIARA')
-                    )
+                     TIARA: (tiara())
                  });
+                 function tiara() {
+                    return Jsoup.connect('https://track.tiara.kakao.com/queen/footsteps').ignoreContentType(true).execute().cookie('TIARA')
+                 }
                  const r = Jsoup.connect("https://accounts.kakao.com/weblogin/authenticate.json").data({
                      "os": "web",
                      "webview_v": "2",
