@@ -104,8 +104,7 @@
                          id = chat.id || null;
                          sk = key || null;
                          break;
-                     }
-                     
+                     } 
                  }
                  if(id === null) throw new ReferenceError("undefined the roomname");
                  Jsoup.connect("https://sharer.kakao.com/api/talk/message/link").referrer("https://sharer.kakao.com/talk/friends/picker/link")
