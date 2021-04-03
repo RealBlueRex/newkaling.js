@@ -12,9 +12,9 @@
  let JsKey = null, Static = java.lang.String("sdk/1.36.6 os/javascript lang/en-US device/Win32 origin/"), referer = null, cookies = "";
  module.exports = {
      login: function (email, password, apiKey, url) {
-         if(typeof(email) !== "string" || typeof(password) !== "string" || typeof(apiKey) !== "string") throw new TypeError("파라미터들은 전부 String입니다.");
-         if(apiKey.length != 32) throw new ReferenceError("apiKey는 32자리입니다. 혹 다른 서비스의 apiKey를 입력하셨나요?");
-         if(!/^http(s)?\:\/\/.+/.test(url)) throw new ReferenceError("url 형식이 아니에요 :(");
+         if(typeof(email) !== "string" || typeof(password) !== "string" || typeof(apiKey) !== "string") throw new TypeError("parameter is must type String");
+         if(apiKey.length != 32) throw new ReferenceError("JsKey is must 32 length");
+         if(!/^http(s)?\:\/\/.+/.test(url)) throw new ReferenceError("url is startsWith http:// or https://");
          JsKey = apiKey || null, Static += encodeURIComponent(java.lang.String(url)) || encodeURIComponent("http://plutonium.dothome.co.kr");
          if(JsKey == null) throw new ReferenceError("JsKey가 null입니다?");
          const lr = Jsoup.connect("https://sharer.kakao.com/talk/friends/picker/link").data({
@@ -65,12 +65,12 @@
                      default: throw new Error("Auth Error " + r.body());
                  }
                  break;
-             case 401: throw new ReferenceError('유효한 API KEY인지 확인해주세요.');
+             case 401: throw new ReferenceError('Please check JsKey');
              default: throw new Error('Auth Error')
          }
      },
      sendCustom: function (room, template_id, template_args) {
-         if(JsKey == null) throw new ReferenceError("JsKey가 등록되어있지 않습니다.");
+         if(JsKey == null) throw new ReferenceError("JsKey is null");
          let json = {
              "link_ver": "4.0",
              "template_id": template_id,
@@ -110,7 +110,7 @@
                      }
                      
                  }
-                 if(id === null) throw new ReferenceError("방이 없는데요?");
+                 if(id === null) throw new ReferenceError("undefined the roomname");
                  Jsoup.connect("https://sharer.kakao.com/api/talk/message/link").referrer("https://sharer.kakao.com/talk/friends/picker/link")
                  .header('Csrf-Token', ni)
                  .header('App-Key', JsKey)
@@ -129,7 +129,7 @@
                      "receiverIds": [id],
                      "receiverType": 'chat',
                      "securityKey": securityKey,
-                     "validatedTalkLink": this.parsedTemplate
+                     "validatedTalkLink": vtr
                  })).ignoreContentType(true).ignoreHttpErrors(true).method(org.jsoup.Connection.Method.POST).execute()
                  break;
          
