@@ -59,10 +59,10 @@
                              _karmtea: r.cookie('_karmtea')
                          })
                          break;
-                     case -450: throw new ReferenceError("로그인 실패");
+                     case -450: throw new ReferenceError("Login Error -450");
                      case -481:
-                     case -484: throw new Error("알 수 없는 에러 " + r.body());               
-                     default: throw new Error("알 수 없는 에러 " + r.body());
+                     case -484: throw new Error("undefined Error " + r.body());               
+                     default: throw new Error("Auth Error " + r.body());
                  }
                  break;
              case 401: throw new ReferenceError('유효한 API KEY인지 확인해주세요.');
@@ -70,6 +70,7 @@
          }
      },
      sendCustom: function (room, template_id, template_args) {
+         if(JsKey == null) throw new ReferenceError("JsKey가 등록되어있지 않습니다.");
          let json = {
              "link_ver": "4.0",
              "template_id": template_id,

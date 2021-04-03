@@ -200,7 +200,7 @@ module.exports = (function () {
     };
 
     Kakao.prototype.sendImage = function(roomTitle, imageUrl, Text, dec) { //이미지 보내기
-        if(!/^http(s)?\:\/\/.+/.test(Image)) throw new TypeError("도매인 주소 형식이 아닙니다. 다시 확인해주세요. :(")
+        if(!/^http(s)?\:\/\/.+/.test(imageUrl)) throw new TypeError("도매인 주소 형식이 아닙니다. 다시 확인해주세요. :(")
         this.send(roomTitle, {
             "link_ver": "4.0",
             "template_object": {
