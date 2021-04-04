@@ -124,7 +124,7 @@
                 })).ignoreContentType(true).ignoreHttpErrors(true).method(org.jsoup.Connection.Method.POST).execute()
                 break;
         
-            case 400: throw new ReferenceError('Please register to Kakao Developer');
+            case 400: throw new ReferenceError('The template object is not valid. If you have another domain, please add the corresponding Url in Kakao Developer Settings.');
 
             default: throw new Error('undefined Error');
         }
