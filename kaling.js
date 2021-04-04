@@ -9,28 +9,28 @@
  "use strict";
  importClass(org.jsoup.Jsoup)
  const crypto = require("./crypto").CryptoJS;
+ let JsKey = null, Static = "sdk/1.36.6 os/javascript lang/en-US device/Win32 origin/", referer = null, cookies = {}
  module.exports = {
-     JsKey: null, Static: "sdk/1.36.6 os/javascript lang/en-US device/Win32 origin/", referer: null, cookies: {},
      login: function (email, password, apiKey, url) {
          if(typeof(email) !== "string" || typeof(password) !== "string" || typeof(apiKey) !== "string") throw new TypeError("parameter is must type String");
          if(apiKey.length != 32) throw new ReferenceError("JsKey is must 32 length");
          if(!/^http(s)?\:\/\/.+/.test(url)) throw new ReferenceError("url is startsWith http:// or https://");
-         this.JsKey = apiKey || null, this.Static += encodeURIComponent(url || "http://example.com");
-         if(this.JsKey == null) throw new ReferenceError("JsKey가 null입니다?");
+         JsKey = apiKey || null, Static += encodeURIComponent(url || "http://example.com");
+         if(JsKey == null) throw new ReferenceError("JsKey가 null입니다?");
          const lr = Jsoup.connect("https://sharer.kakao.com/talk/friends/picker/link").data({
-             "app_key": java.lang.String(this.JsKey),
+             "app_key": java.lang.String(JsKey),
              "validation_action": "default",
              "validation_params": "{}",
-             "ka": java.lang.String(this.Static),
+             "ka": java.lang.String(Static),
              "lcba": ""
          }).method(org.jsoup.Connection.Method.POST).execute();
          const ls = lr.statusCode();
          switch (ls) {
              case 200:
-                 this.referer = lr.url().toExternalForm()
+                 referer = lr.url().toExternalForm()
                  let doc = lr.parse();
                  const decryptKey =  doc.select('input[name=p]').attr('value');
-                 Object.assign(this.cookies, {
+                 Object.assign(cookies, {
                      _kadu: lr.cookie('_kadu'),
                      _kadub: lr.cookie('_kadub'),
                      _maldive_oauth_webapp_session: lr.cookie('_maldive_oauth_webapp_session'),
@@ -42,14 +42,14 @@
                      "email": crypto.AES.encrypt(email, decryptKey).toString(),
                      "password": crypto.AES.encrypt(password, decryptKey).toString(),
                      "stay_signed_in": "true",
-                     "continue": decodeURIComponent(this.referer.split("=")[1]),
+                     "continue": decodeURIComponent(referer.split("=")[1]),
                      "third": "false",
                      "k": "true"
                  }).method(org.jsoup.Connection.Method.POST).ignoreContentType(true).ignoreHttpErrors(true).execute();
                  const sc = JSON.parse(r.body()).status;
                  switch (sc) {
                      case 0:
-                         Object.assign(this.cookies, {
+                         Object.assign(cookies, {
                              _kawlt: r.cookie('_kawlt'),
                              _kawltea: r.cookie('_kawltea'),
                              _karmt: r.cookie('_karmt'),
@@ -67,32 +67,32 @@
          }
      },
      sendData: function (room, json, type) {
-        if(this.JsKey == null) throw new ReferenceError("JsKey is null");
-        const sr = Jsoup.connect("https://sharer.kakao.com/talk/friends/picker/link").referrer(this.referer).cookies({
-            "TIARA": this.cookies.TIARA,
-            "_kawlt": this.cookies._kawlt,
-            "_kawltea": this.cookies._kawltea,
-            "_karmt": this.cookies._karmt,
-            "_karmtea": this.cookies._karmtea
+        if(JsKey == null) throw new ReferenceError("JsKey is null");
+        const sr = Jsoup.connect("https://sharer.kakao.com/talk/friends/picker/link").referrer(referer).cookies({
+            "TIARA": cookies.TIARA,
+            "_kawlt": cookies._kawlt,
+            "_kawltea": cookies._kawltea,
+            "_karmt": cookies._karmt,
+            "_karmtea": cookies._karmtea
         }).data({
-            "app_key": this.JsKey,
+            "app_key": JsKey,
             "validation_action": type || "default",
             "validation_params": JSON.stringify(json),
-            "ka": java.lang.String(this.Static),
+            "ka": java.lang.String(Static),
             "lcba": ""
         }).ignoreHttpErrors(true).method(org.jsoup.Connection.Method.POST).execute();
         const src = sr.statusCode();
         switch (src) {
             case 200:
-                Object.assign(this.cookies, {
+                Object.assign(cookies, {
                     KSHARER: sr.cookie('KSHARER'),
                     using: 'true'
                 });
                 const doc = sr.parse(), vtr = doc.select('#validatedTalkLink').attr('value'), ni = doc.select('div').last().attr('ng-init').split('\'')[1];
                 const { chats, sk: key } = JSON.parse(Jsoup.connect('https://sharer.kakao.com/api/talk/chats').referrer('https://sharer.kakao.com/talk/friends/picker/link')
                 .header('Csrf-Token', ni)
-                .header('App-Key', this.JsKey)
-                .cookies(this.cookies).ignoreContentType(true).execute().body().toString().replace('\u200b', ''))
+                .header('App-Key', JsKey)
+                .cookies(cookies).ignoreContentType(true).execute().body().toString().replace('\u200b', ''))
                 for (var i = 0, j = chats.length, id, sk; i < j; i++) {
                     const chat = chats[i];
                     if (chat.title == room) {
@@ -104,17 +104,17 @@
                 if(id === null) throw new ReferenceError("undefined the roomname" + room);
                 Jsoup.connect("https://sharer.kakao.com/api/talk/message/link").referrer("https://sharer.kakao.com/talk/friends/picker/link")
                 .header('Csrf-Token', ni)
-                .header('App-Key', this.JsKey)
+                .header('App-Key', JsKey)
                 .header('Content-Type', 'application/json;charset=UTF-8').cookies({
-                    "KSHARER": this.cookies.KSHARER,
-                    "TIARA": this.cookies.TIARA,
-                    "using": this.cookies.using,
-                    "_kadu": this.cookies._kadu,
-                    "_kadub": this.cookies._kadub,
-                    "_kawlt": this.cookies._kawlt,
-                    "_kawltea": this.cookies._kawltea,
-                    "_karmt": this.cookies._karmt,
-                    "_karmtea": this.cookies._karmtea
+                    "KSHARER": cookies.KSHARER,
+                    "TIARA": cookies.TIARA,
+                    "using": cookies.using,
+                    "_kadu": cookies._kadu,
+                    "_kadub": cookies._kadub,
+                    "_kawlt": cookies._kawlt,
+                    "_kawltea": cookies._kawltea,
+                    "_karmt": cookies._karmt,
+                    "_karmtea": cookies._karmtea
                 }).requestBody(JSON.stringify({
                     "receiverChatRoomMemberCount": [1],
                     "receiverIds": [id],
