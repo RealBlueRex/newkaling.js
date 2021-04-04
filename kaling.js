@@ -60,7 +60,6 @@
                 case -484: throw new Error("undefined Error -484: " + r.body());               
                 default: throw new Error("Auth Error " + r.body());
             }
-            break;
          } else if(ls == 401) throw new ReferenceError('Please check JsKey');
          else throw new Error('Auth Error');
      },
