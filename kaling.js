@@ -36,7 +36,7 @@
                      _maldive_oauth_webapp_session: lr.cookie('_maldive_oauth_webapp_session'),
                      TIARA: (Jsoup.connect('https://track.tiara.kakao.com/queen/footsteps').ignoreContentType(true).execute().cookie('TIARA'))
                  });
-                 const r = Jsoup.connect("https://accounts.kakao.com/weblogin/authenticate.json").referrer(this.referer).cookies(this.cookies).data({
+                 const r = Jsoup.connect("https://accounts.kakao.com/weblogin/authenticate.json").referrer(referer).cookies(cookies).data({
                      "os": "web",
                      "webview_v": "2",
                      "email": crypto.AES.encrypt(email, decryptKey).toString(),
