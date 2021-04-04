@@ -25,46 +25,44 @@
              "lcba": ""
          }).method(org.jsoup.Connection.Method.POST).execute();
          const ls = lr.statusCode();
-         switch (ls) {
-             case 200:
-                 referer = lr.url().toExternalForm()
-                 let doc = lr.parse();
-                 const decryptKey =  doc.select('input[name=p]').attr('value');
-                 Object.assign(cookies, {
-                     _kadu: lr.cookie('_kadu'),
-                     _kadub: lr.cookie('_kadub'),
-                     _maldive_oauth_webapp_session: lr.cookie('_maldive_oauth_webapp_session'),
-                     TIARA: (Jsoup.connect('https://track.tiara.kakao.com/queen/footsteps').ignoreContentType(true).execute().cookie('TIARA'))
-                 });
-                 const r = Jsoup.connect("https://accounts.kakao.com/weblogin/authenticate.json").referrer(referer).cookies(cookies).data({
-                     "os": "web",
-                     "webview_v": "2",
-                     "email": crypto.AES.encrypt(email, decryptKey).toString(),
-                     "password": crypto.AES.encrypt(password, decryptKey).toString(),
-                     "stay_signed_in": "true",
-                     "continue": decodeURIComponent(referer.split("=")[1]),
-                     "third": "false",
-                     "k": "true"
-                 }).method(org.jsoup.Connection.Method.POST).ignoreContentType(true).ignoreHttpErrors(true).execute();
-                 const sc = JSON.parse(r.body()).status;
-                 switch (sc) {
-                     case 0:
-                         Object.assign(cookies, {
-                             _kawlt: r.cookie('_kawlt'),
-                             _kawltea: r.cookie('_kawltea'),
-                             _karmt: r.cookie('_karmt'),
-                             _karmtea: r.cookie('_karmtea')
-                         })
-                         break;
-                     case -450: throw new ReferenceError("Login Error -450");
-                     case -481:
-                     case -484: throw new Error("undefined Error -484: " + r.body());               
-                     default: throw new Error("Auth Error " + r.body());
-                 }
-                 break;
-             case 401: throw new ReferenceError('Please check JsKey');
-             default: throw new Error('Auth Error')
-         }
+         if(ls == 200) {
+            referer = lr.url().toExternalForm()
+            let doc = lr.parse();
+            const decryptKey =  doc.select('input[name=p]').attr('value');
+            Object.assign(cookies, {
+                _kadu: lr.cookie('_kadu'),
+                _kadub: lr.cookie('_kadub'),
+                _maldive_oauth_webapp_session: lr.cookie('_maldive_oauth_webapp_session'),
+                TIARA: (Jsoup.connect('https://track.tiara.kakao.com/queen/footsteps').ignoreContentType(true).execute().cookie('TIARA'))
+            });
+            const r = Jsoup.connect("https://accounts.kakao.com/weblogin/authenticate.json").referrer(referer).cookies(cookies).data({
+                "os": "web",
+                "webview_v": "2",
+                "email": crypto.AES.encrypt(email, decryptKey).toString(),
+                "password": crypto.AES.encrypt(password, decryptKey).toString(),
+                "stay_signed_in": "true",
+                "continue": decodeURIComponent(referer.split("=")[1]),
+                "third": "false",
+                "k": "true"
+            }).method(org.jsoup.Connection.Method.POST).ignoreContentType(true).ignoreHttpErrors(true).execute();
+            const sc = JSON.parse(r.body()).status;
+            switch (sc) {
+                case 0:
+                    Object.assign(cookies, {
+                        _kawlt: r.cookie('_kawlt'),
+                        _kawltea: r.cookie('_kawltea'),
+                        _karmt: r.cookie('_karmt'),
+                        _karmtea: r.cookie('_karmtea')
+                    })
+                    break;
+                case -450: throw new ReferenceError("Login Error -450");
+                case -481:
+                case -484: throw new Error("undefined Error -484: " + r.body());               
+                default: throw new Error("Auth Error " + r.body());
+            }
+            break;
+         } else if(ls == 401) throw new ReferenceError('Please check JsKey');
+         else throw new Error('Auth Error');
      },
      sendData: function (room, json, type) {
         if(JsKey == null) throw new ReferenceError("JsKey is null");
