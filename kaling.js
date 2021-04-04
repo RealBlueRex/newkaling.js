@@ -106,7 +106,7 @@
                          break;
                      } 
                  }
-                 if(id === null) throw new ReferenceError("undefined the roomname");
+                 if(id === null) throw new ReferenceError("undefined the roomname: " + room);
                  Jsoup.connect("https://sharer.kakao.com/api/talk/message/link").referrer("https://sharer.kakao.com/talk/friends/picker/link")
                     .header('Csrf-Token', ni)
                     .header('App-Key', this.JsKey)
