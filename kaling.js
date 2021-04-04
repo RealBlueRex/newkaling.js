@@ -129,13 +129,17 @@
                     })).ignoreContentType(true).ignoreHttpErrors(true).method(org.jsoup.Connection.Method.POST).execute()
                  break;
          
-             case 400: throw new ReferenceError('Please register to Kakao Developer');
+             case 400: throw new ReferenceError('The template object is not valid. If you have another domain, please add the corresponding Url in Kakao Developer Settings.');
 
              default: throw new Error('undefined Error');
          }
      },
      sendData: function (room, json) {
         if(this.JsKey == null) throw new ReferenceError("JsKey is null");
+        let json = {
+            "link_ver": "4.0",
+            "template_object": JSON.stringify(json)
+        }
         const sr = Jsoup.connect("https://sharer.kakao.com/talk/friends/picker/link").referrer(this.referer).cookies({
             "TIARA": this.cookies.TIARA,
             "_kawlt": this.cookies._kawlt,
