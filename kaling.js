@@ -135,13 +135,13 @@
             "template_id": template_id,
             "template_args": JSON.stringify(json)
         }
-        this.sendData(roomName, j, "custom");
+        this.sendData(roomName, JSON.stringify(j), "custom");
      },
      sendDefault: function (roomName, json) {
         let j = {
             "link_ver": "4.0",
             "template_object": JSON.stringify(json)
         }
-         this.sendData(roomName, j, "default");
+         this.sendData(roomName, JSON.stringify(j), "default");
      }
  }
