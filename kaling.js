@@ -66,80 +66,8 @@
              default: throw new Error('Auth Error')
          }
      },
-     sendCustom: function (room, template_id, template_args) {
-         if(this.JsKey == null) throw new ReferenceError("JsKey is null");
-         let json = {
-             "link_ver": "4.0",
-             "template_id": template_id,
-             "template_args": JSON.stringify(template_args)
-         }
-         const sr = Jsoup.connect("https://sharer.kakao.com/talk/friends/picker/link").referrer(this.referer).cookies({
-             "TIARA": this.cookies.TIARA,
-             "_kawlt": this.cookies._kawlt,
-             "_kawltea": this.cookies._kawltea,
-             "_karmt": this.cookies._karmt,
-             "_karmtea": this.cookies._karmtea
-         }).data({
-             "app_key": this.JsKey,
-             "validation_action": "custom",
-             "validation_params": JSON.stringify(json),
-             "ka": java.lang.String(this.Static),
-             "lcba": ""
-         }).ignoreHttpErrors(true).method(org.jsoup.Connection.Method.POST).execute();
-         const src = sr.statusCode();
-         switch (src) {
-             case 200:
-                 Object.assign(this.cookies, {
-                     KSHARER: sr.cookie('KSHARER'),
-                     using: 'true'
-                 });
-                 const doc = sr.parse(), vtr = doc.select('#validatedTalkLink').attr('value'), ni = doc.select('div').last().attr('ng-init').split('\'')[1];
-                 const { chats, sk: key } = JSON.parse(Jsoup.connect('https://sharer.kakao.com/api/talk/chats').referrer('https://sharer.kakao.com/talk/friends/picker/link')
-                 .header('Csrf-Token', ni)
-                 .header('App-Key', this.JsKey)
-                 .cookies(this.cookies).ignoreContentType(true).execute().body().toString().replace('\u200b', ''))
-                 for (var i = 0, j = chats.length, id, sk; i < j; i++) {
-                     const chat = chats[i];
-                     if (chat.title == room) {
-                         id = chat.id || null;
-                         sk = key || null;
-                         break;
-                     } 
-                 }
-                 if(id === null) throw new ReferenceError("undefined the roomname: " + room);
-                 Jsoup.connect("https://sharer.kakao.com/api/talk/message/link").referrer("https://sharer.kakao.com/talk/friends/picker/link")
-                    .header('Csrf-Token', ni)
-                    .header('App-Key', this.JsKey)
-                    .header('Content-Type', 'application/json;charset=UTF-8').cookies({
-                         "KSHARER": this.cookies.KSHARER,
-                         "TIARA": this.cookies.TIARA,
-                         "using": this.cookies.using,
-                         "_kadu": this.cookies._kadu,
-                         "_kadub": this.cookies._kadub,
-                         "_kawlt": this.cookies._kawlt,
-                         "_kawltea": this.cookies._kawltea,
-                         "_karmt": this.cookies._karmt,
-                         "_karmtea": this.cookies._karmtea
-                    }).requestBody(JSON.stringify({
-                         "receiverChatRoomMemberCount": [1],
-                         "receiverIds": [id],
-                         "receiverType": 'chat',
-                         "securityKey": sk,
-                         "validatedTalkLink": JSON.parse(vtr)
-                    })).ignoreContentType(true).ignoreHttpErrors(true).method(org.jsoup.Connection.Method.POST).execute()
-                 break;
-         
-             case 400: throw new ReferenceError('The template object is not valid. If you have another domain, please add the corresponding Url in Kakao Developer Settings.');
-
-             default: throw new Error('undefined Error');
-         }
-     },
-     sendData: function (room, json) {
+     sendData: function (room, json, type) {
         if(this.JsKey == null) throw new ReferenceError("JsKey is null");
-        let json = {
-            "link_ver": "4.0",
-            "template_object": JSON.stringify(json)
-        }
         const sr = Jsoup.connect("https://sharer.kakao.com/talk/friends/picker/link").referrer(this.referer).cookies({
             "TIARA": this.cookies.TIARA,
             "_kawlt": this.cookies._kawlt,
@@ -148,7 +76,7 @@
             "_karmtea": this.cookies._karmtea
         }).data({
             "app_key": this.JsKey,
-            "validation_action": "default",
+            "validation_action": type || "default",
             "validation_params": JSON.stringify(json),
             "ka": java.lang.String(this.Static),
             "lcba": ""
@@ -173,7 +101,7 @@
                         break;
                     } 
                 }
-                if(id === null) throw new ReferenceError("undefined the roomname");
+                if(id === null) throw new ReferenceError("undefined the roomname" + room);
                 Jsoup.connect("https://sharer.kakao.com/api/talk/message/link").referrer("https://sharer.kakao.com/talk/friends/picker/link")
                 .header('Csrf-Token', ni)
                 .header('App-Key', this.JsKey)
@@ -200,5 +128,20 @@
 
             default: throw new Error('undefined Error');
         }
+     },
+     sendCustom: function (roomName, template_id, json) {
+        let j = {
+            "link_ver": "4.0",
+            "template_id": template_id,
+            "template_args": JSON.stringify(json)
+        }
+        this.sendData(roomName, j, "custom");
+     },
+     sendDefault: function (roomName, json) {
+        let j = {
+            "link_ver": "4.0",
+            "template_object": JSON.stringify(json)
+        }
+         this.sendData(roomName, j, "default");
      }
  }
