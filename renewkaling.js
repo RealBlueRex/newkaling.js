@@ -47,7 +47,7 @@ module.exports = (function () {
                 Object.assign(this.cookies, {
                     _kadu: loginResponse.cookie('_kadu'),
                     _kadub: loginResponse.cookie('_kadub'),
-                    _maldive_oauth_webapp_key: loginResponse.cookie('_maldive_oauth_webapp_key'),
+                    _maldive_oauth_webapp_session_key: loginResponse.cookie('_maldive_oauth_webapp_session_key'),
                     TIARA: (
                         org.jsoup.Jsoup.connect('https://track.tiara.kakao.com/queen/footsteps')
                             .ignoreContentType(true)
