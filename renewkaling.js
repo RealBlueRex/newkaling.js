@@ -11,19 +11,26 @@ module.exports = (function () {
     'use strict'
     const { CryptoJS } = require('./crypto')
     
-    function Kakao() {
-        this.apiKey = null
-        this.cookies = {}
-        this.kakaoStatic = 'sdk/1.36.6 os/javascript lang/en-US device/Win32 origin/'
-    }
-
-    Kakao.prototype.login = function (email, password, apiKey, location) {
+    /**
+     * Kakao Init
+     * @param {String} apiKey Kakao Developers JSKey
+     * @param {String} location Kakao Developers URI
+     */
+    function Kakao(apiKey, location) {
         if (apiKey.constructor != String || location.constructor != String) throw new TypeError('매개변수의 타입이 올바르지 않습니다.')
         if (apiKey.length != 32) throw new ReferenceError('API KEY는 32자여야 합니다. 올바른 API KEY를 사용했는지 확인해주세요.')
         if (!/^http(s)?\:\/\/.+/.test(location)) throw new ReferenceError('도메인 주소의 형식이 올바르지 않습니다.')
-        this.apiKey = apiKey
-        this.kakaoStatic += encodeURIComponent(location || 'http://kiribot.dothome.co.kr')
+        this.apiKey = apiKey;
+        this.cookies = {};
+        this.kakaoStatic = 'sdk/1.36.6 os/javascript lang/en-US device/Win32 origin/' + encodeURIComponent(location || 'https://developers.kakao.com');
+    }
 
+    /**
+     * Kakao Login
+     * @param {String} email Kakao Accounts Email
+     * @param {String} password Kakao Accounts Password
+     */
+    Kakao.prototype.login = function (email, password) {
         if (email.constructor != String) throw new TypeError('이메일의 타입은 String이어야 합니다.')
         if (password.constructor != String) throw new TypeError('비밀번호의 타입은 String이어야 합니다.')
         if (this.apiKey === null) throw new ReferenceError('로그인 메서드가 카카오 SDK가 초기화되기 전에 호출되었습니다.')
@@ -94,6 +101,12 @@ module.exports = (function () {
         }
     }
     
+    /**
+     * Kakao Link Send
+     * @param {String} room Room Name
+     * @param {JSON} params Kakao Send Info
+     * @param {'custom' | 'default'} type custom or default
+     */
     Kakao.prototype.send = function (room, params, type) {
         const response = org.jsoup.Jsoup.connect('https://sharer.kakao.com/talk/friends/picker/link')
             .referrer(this.referer)
