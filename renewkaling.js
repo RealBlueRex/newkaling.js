@@ -233,21 +233,36 @@ module.exports = (function () {
         });
     }
     Kakao.prototype.sendfileImage = function(room, path, Text, dec){
-        var key = (function (type, path){
+        if(!/(\.gif|\.jpg|\.jpeg|\.png)$/i.test(path)) throw new Error("이미지 파일이 아닙니다.");
+        let key;
         try{
-        if(!/(\.gif|\.jpg|\.jpeg)$/i.test(path))throw new Error("이미지 파일이 아닙니다.");
-        var file = new java.io.File(path);
-        var fileInputStream = new java.io.FileInputStream(file);
-        var res = org.jsoup.Jsoup.connect("https://up-m.talk.kakao.com/upload")
-        .header("A", "An/9.0.0/ko")
-        .data("attachment_type", type)
-        .data("user_id", "-1")
-        .data("file", file.getName(), fileInputStream)
-        .ignoreHttpErrors(true).post().text();
-        } catch(e){throw new Error('없는 파일이거나 업로드중 에러가 발생하였습니다.'); }
-        })("image/jpeg", path);
+            const file = new java.io.File(path);
+            const fileInputStream = new java.io.FileInputStream(file);
+            key = org.jsoup.Jsoup.connect("https://up-m.talk.kakao.com/upload")
+            .header("A", "An/9.0.0/ko")
+            .data("attachment_type", type)
+            .data("user_id", "-1")
+            .data("file", file.getName(), fileInputStream)
+            .ignoreHttpErrors(true).post().text();
+        } catch(e) {
+            throw new Error('없는 파일이거나 업로드중 에러가 발생하였습니다.');
+        }
         if(key)return this.sendImage(room, 'http://dn-m.talk.kakao.com/'+key, Text, dec);
-        else throw new TypeError("key를 받지 못하였습니다.")
+        throw new TypeError("key를 받지 못하였습니다.")
+    }
+    Kakao.prototype.sendTitle() = function (room, title, button_title) {
+        return this.send(room, {
+            "link_ver": "4.0",
+            "template_object": {
+                "object_type": "text",
+                "text": title,
+                "link": {},
+                "buttons": [{
+                    "title": button_title,
+                    "link": {}
+                }]
+            }
+        });
     }
     Kakao.prototype.sendButton = function (room, title, dec, button_title, button_url) {
         this.send(room, {
